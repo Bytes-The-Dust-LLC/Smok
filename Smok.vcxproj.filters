@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="includes">
+      <UniqueIdentifier>{1CA10C65-086E-6770-3187-55181DB39CFE}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="includes\Smok">
+      <UniqueIdentifier>{2594EB3F-9154-6776-5A8F-B0F3C60EAC52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="includes\Smok\Assets">
+      <UniqueIdentifier>{671F13C0-53AE-9C89-FCCC-B084E83AAD2F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="includes\Smok\Assets\Serilize">
+      <UniqueIdentifier>{DD4BC6D9-4964-AD03-1211-3D9D7EE8419D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="includes\Smok\Components">
+      <UniqueIdentifier>{1A7860B9-069D-AF39-2FE8-94C91B6CAE57}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="includes\Smok\Memory">
+      <UniqueIdentifier>{ED8F10DB-D91E-9AA4-823D-AE9F6EABAA4A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="includes\Smok\Assets\Mesh.hpp">
+      <Filter>includes\Smok\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\Smok\Assets\Serilize\SerilizeMesh.hpp">
+      <Filter>includes\Smok\Assets\Serilize</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\Smok\Components\Camera.hpp">
+      <Filter>includes\Smok\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\Smok\Components\ECSRegistery.hpp">
+      <Filter>includes\Smok\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\Smok\Components\IComponent.hpp">
+      <Filter>includes\Smok\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\Smok\Components\MeshComponent.hpp">
+      <Filter>includes\Smok\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\Smok\Components\Transform.hpp">
+      <Filter>includes\Smok\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\Smok\Memory\LifetimeDeleteQueue.hpp">
+      <Filter>includes\Smok\Memory</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Source.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
