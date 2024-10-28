@@ -33,9 +33,6 @@
     <ClInclude Include="includes\Smok\Components\Camera.hpp">
       <Filter>includes\Smok\Components</Filter>
     </ClInclude>
-    <ClInclude Include="includes\Smok\Components\ECSRegistery.hpp">
-      <Filter>includes\Smok\Components</Filter>
-    </ClInclude>
     <ClInclude Include="includes\Smok\Components\IComponent.hpp">
       <Filter>includes\Smok\Components</Filter>
     </ClInclude>

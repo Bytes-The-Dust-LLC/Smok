@@ -6,7 +6,7 @@
 
 #include <Smok/Assets/Mesh.hpp>
 
-#include <Wireframe/Pipeline/GraphicsPipeline.hpp>
+#include <BTDSTD/Wireframe/Pipeline/GraphicsPipeline.hpp>
 
 namespace Smok::ECS::Comp
 {
