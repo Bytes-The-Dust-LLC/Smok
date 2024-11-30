@@ -10,9 +10,6 @@
     <Filter Include="includes\Smok\Assets">
       <UniqueIdentifier>{671F13C0-53AE-9C89-FCCC-B084E83AAD2F}</UniqueIdentifier>
     </Filter>
-    <Filter Include="includes\Smok\Assets\Serilize">
-      <UniqueIdentifier>{DD4BC6D9-4964-AD03-1211-3D9D7EE8419D}</UniqueIdentifier>
-    </Filter>
     <Filter Include="includes\Smok\Components">
       <UniqueIdentifier>{1A7860B9-069D-AF39-2FE8-94C91B6CAE57}</UniqueIdentifier>
     </Filter>
@@ -24,11 +21,14 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="includes\Smok\Assets\Mesh.hpp">
+    <ClInclude Include="includes\Smok\Assets\AssetManager.hpp">
       <Filter>includes\Smok\Assets</Filter>
     </ClInclude>
-    <ClInclude Include="includes\Smok\Assets\Serilize\SerilizeMesh.hpp">
-      <Filter>includes\Smok\Assets\Serilize</Filter>
+    <ClInclude Include="includes\Smok\Assets\AssetManagerAssets.hpp">
+      <Filter>includes\Smok\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\Smok\Assets\Mesh.hpp">
+      <Filter>includes\Smok\Assets</Filter>
     </ClInclude>
     <ClInclude Include="includes\Smok\Components\Camera.hpp">
       <Filter>includes\Smok\Components</Filter>

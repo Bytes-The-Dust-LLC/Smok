@@ -8,6 +8,7 @@
 
 #include <BTDSTD/Formats/json.hpp>
 #include <BTDSTD/IO/FileInfo.hpp>
+#include <BTDSTD/IO/File.hpp>
 
 #include <glm/vec3.hpp>
 #include <glm/vec2.hpp>
@@ -88,58 +89,19 @@ namespace Smok::Asset::Mesh
 		return false;
 	}
 
-	////takes a array of vertices and generates a array of indices and vertices
-	//static inline void GenerateUniqueVerticesAndIndicesArrays(const std::vector<Vertex>& verticesToSort,
-	//	std::vector<Vertex>& uniqueVertices, std::vector<uint32_t>& uniqueIndices)
-	//{
-	//	const size_t vertexSortCount = verticesToSort.size();
-	//	uniqueVertices.clear(); uniqueIndices.clear();
-	//	uniqueVertices.reserve(vertexSortCount); uniqueIndices.reserve(vertexSortCount);
-
-	//	size_t currentUniqueVertexCount = 0;
-	//	size_t currentUniqueIndexCount = 0;
-	//	size_t nextIndicesIndex = 0;
-
-	//	for (size_t v = 0; v < vertexSortCount; ++v)
-	//	{
-	//		//checks if the vertex matchea a already existing index
-	//		bool wasFound = false;
-	//		for (size_t i = 0; i < currentUniqueIndexCount; ++i)
-	//		{
-	//			if (uniqueVertices[uniqueIndices[i]] == verticesToSort[v])
-	//			{
-	//				wasFound = true;
-	//				break;
-	//			}
-	//		}
-
-	//		//if it does not, add it
-	//		if (!wasFound)
-	//		{
-	//			uniqueVertices.emplace_back(verticesToSort[v]);
-	//			uniqueIndices.emplace_back(nextIndicesIndex);
-	//			nextIndicesIndex++;
-	//			currentUniqueIndexCount++; currentUniqueVertexCount++;
-	//		}
-	//	}
-	//}
-
 	//defines a mesh
 	struct Mesh
 	{
 		bool canRender = true; //is the mesh enabled for rendering
 		uint32_t LODIndex = 0; //the LOD level of this mesh
 
-		//std::vector<Vertex> vertices; //the vertices
 		std::vector<uint32_t> indices; //the indices
 		
-		//Wireframe::MeshBuffers::VertexBuffer vertexBuffer; //the allocated vertex buffer
 		Wireframe::MeshBuffers::IndexBuffer indexBuffer; //the allocated index buffer
 
 		//creates a mesh
 		inline bool CreateIndexBuffers(VmaAllocator& allocator)
 		{
-			//vertexBuffer.Create(allocator, sizeof(Vertex), vertices.data(), vertices.size());
 			indexBuffer.Create(allocator, indices.data(), indices.size());
 
 			canRender = true;
@@ -150,13 +112,9 @@ namespace Smok::Asset::Mesh
 		inline void DestroyIndexBuffers(VmaAllocator& allocator)
 		{
 			indexBuffer.Destroy(allocator);
-			//vertexBuffer.Destroy(allocator);
 
 			canRender = false;
 		}
-
-		//destroys vertices
-		//inline void DeleteVertexData() { vertices.clear(); }
 
 		//destroys indices
 		inline void DeleteIndexData() { indices.clear(); }
@@ -188,46 +146,123 @@ namespace Smok::Asset::Mesh
 
 namespace Smok::Asset::Mesh::Serilize
 {
+	//gets the version of this serilize API
+	static inline std::string GetAPIVersionStr() { return "1"; }
+
 	//gets the file extension for a binary smesh file
 	static inline std::string GetSmeshBinaryFileExtensionStr() { return "smesh"; }
 
 	//gets the file extension for a decl smesh file
 	static inline std::string GetSmeshDeclFileExtensionStr() { return "smeshdecl"; }
 
-	//writes a static mesh to a file
-	/*inline bool WriteStaticMeshToFile(const BTD::IO::FileInfo& declFile, const BTD::IO::FileInfo& binaryFile, const StaticMesh& staticMesh)
+	//writes a static mesh to file
+	static inline bool WriteStaticMeshDataToFile(const BTD::IO::FileInfo& _declFile, const BTD::IO::FileInfo& _binaryFile, const StaticMesh& data)
+	{
+		////checks if the file has the right extension, if not throw a warning and add it ourself
+		BTD::IO::FileInfo declFile = _declFile;
+		if (declFile.extension != GetSmeshDeclFileExtensionStr())
+		{
+			fmt::print("Smok Asset Mesh Warning: Serilize || WriteStaticMeshDataToFile || \"{}\" does not end in .{}, this is the file extension for Smok Static Mesh Decl files. This warning can be ignored as we will add the extension. But to make it go away, add it to your file. The function \"GetSmeshDeclFileExtensionStr\" can be used to get the extension to add.\n",
+				declFile.GetPathStr(), GetSmeshDeclFileExtensionStr());
+
+			declFile.AppendFileExtension(GetSmeshDeclFileExtensionStr());
+		}
+
+		////checks if the file has the right extension, if not throw a warning and add it ourself
+		BTD::IO::FileInfo binaryFile = _binaryFile;
+		if (binaryFile.extension != GetSmeshBinaryFileExtensionStr())
+		{
+			fmt::print("Smok Asset Mesh Warning: Serilize || WriteStaticMeshDataToFile || \"{}\" does not end in .{}, this is the file extension for Smok Static Mesh Binary files. This warning can be ignored as we will add the extension. But to make it go away, add it to your file. The function \"GetSmeshBinaryFileExtensionStr\" can be used to get the extension to add.\n",
+				binaryFile.GetPathStr(), GetSmeshBinaryFileExtensionStr());
+
+			binaryFile.AppendFileExtension(GetSmeshBinaryFileExtensionStr());
+		}
+
+		//calculates the binary and decl blobs
+		const size_t vertexCount = data.vertices.size();
+		BTD::IO::File::WriteWholeBinaryFile(binaryFile, data.vertices.data(), sizeof(Smok::Asset::Mesh::Vertex), vertexCount);
+
+		//build json and write to file
+		nlohmann::json declData;
+		declData["version"] = GetAPIVersionStr();
+		declData["vertexCount"] = vertexCount;
+
+		//stores the array of meshes
+		const size_t subMeshCount = data.meshes.size();
+		std::vector<std::vector<uint32_t>> submeshIndices;
+		for (size_t m = 0; m < subMeshCount; ++m)
+		{
+			std::vector<uint32_t> indices;
+			const size_t indicesCount = data.meshes[m].indices.size();
+			for (size_t index = 0; index < indicesCount; ++index)
+				indices.emplace_back(data.meshes[m].indices[index]);
+			submeshIndices.emplace_back(indices);
+		}
+		declData["meshCount"] = subMeshCount;
+		declData["meshes"] = submeshIndices;
+		
+		//writes decl data
+		BTD::IO::File::WriteWholeTextFile(declFile, declData.dump());
+
+		return true;
+	}
+
+	//laods a static mesh from file
+	static inline bool LoadStaticMeshDataFromFile(const BTD::IO::FileInfo& declFile, const BTD::IO::FileInfo& binaryFile, StaticMesh& data)
 	{
 		//checks if the file has the right extension, if not throw a warning and add it ourself
-		BTD::IO::FileInfo d = declFile;
-		std::string p = d.GetPathStr();
-		if (d.extension != GetSmeshDeclFileExtensionStr())
+		if (declFile.extension != GetSmeshDeclFileExtensionStr())
 		{
-			fmt::print("Smok Static Mesh Warning: Serilize || WriteStaticMeshToFile || \"{}\" does not end in .{}, this is the file extension for Smok Static Mesh files. This warning can be ignored as we will add the extension. But to make it go away, add it to your file. The Mesh header file contains a static funtion for getting the correct file extension.\n",
-				p, GetSmeshDeclFileExtensionStr());
-
-			//if we need a period
-			if (p[p.size() - 1] != '.')
-				d = BTD::IO::FileInfo(p + "." + GetSmeshDeclFileExtensionStr());
-			else
-				d = BTD::IO::FileInfo(p + GetSmeshDeclFileExtensionStr());
+			fmt::print("Smok Asset Mesh Error: Serilize || LoadStaticMeshDataFromFile || \"{}\" does not end in .{}, this is the file extension for Smok Static Mesh Decl files. We can not validate this is a correct file. The function \"WriteStaticMeshDataToFile\" can be used to generate valid Smok Mesh files.\n",
+				declFile.GetPathStr(), GetSmeshDeclFileExtensionStr());
+			return false;
 		}
 
-		BTD::IO::FileInfo b = binaryFile;
-		p = b.GetPathStr();
-		if (b.extension != GetSmeshBinaryFileExtensionStr())
+		//checks if the files exist
+		if (!declFile.Exists())
 		{
-			fmt::print("Smok Static Mesh Warning: Serilize || WriteStaticMeshToFile || \"{}\" does not end in .{}, this is the file extension for Smok Static Mesh files. This warning can be ignored as we will add the extension. But to make it go away, add it to your file. The Mesh header file contains a static funtion for getting the correct file extension.\n",
-				p, GetSmeshBinaryFileExtensionStr());
-
-			//if we need a period
-			if (p[p.size() - 1] != '.')
-				b = BTD::IO::FileInfo(p + "." + GetSmeshBinaryFileExtensionStr());
-			else
-				b = BTD::IO::FileInfo(p + GetSmeshBinaryFileExtensionStr());
+			fmt::print("Smok Asset Mesh Error: Serilize || LoadStaticMeshDataFromFile || \"{}\" does not exist. We need this file for loading static mesh data. The function \"WriteStaticMeshDataToFile\" can be used to generate valid Smok Mesh files.\n",
+				declFile.GetPathStr());
+			return false;
 		}
 
-		//constructs data
-	}*/
+		//checks if the file has the right extension, if not throw a warning and add it ourself
+		if (binaryFile.extension != GetSmeshBinaryFileExtensionStr())
+		{
+			fmt::print("Smok Asset Mesh Error: Serilize || LoadStaticMeshDataFromFile || \"{}\" does not end in .{}, this is the file extension for Smok Static Mesh Binary files. We can not validate this is the correct file The function \"WriteStaticMeshDataToFile\" can be used to generate valid Smok Mesh files.\n",
+				binaryFile.GetPathStr(), GetSmeshBinaryFileExtensionStr());
+			return false;
+		}
 
-	//loads a static mesh from a file
+		//checks if the file exists
+		if (!binaryFile.Exists())
+		{
+			fmt::print("Smok Asset Mesh Error: Serilize || LoadStaticMeshDataFromFile || \"{}\" does not exist. We need this file for loading static mesh data. The function \"WriteStaticMeshDataToFile\" can be used to generate valid Smok Mesh files.\n",
+				binaryFile.GetPathStr());
+			return false;
+		}
+
+		//loads the decl file and check it's version, throw a warning
+		nlohmann::json decl = nlohmann::json::parse(BTD::IO::File::ReadWholeTextFile(declFile).data);
+		if (decl["version"] != GetAPIVersionStr())
+		{
+			const std::string ver = decl["version"];
+			fmt::print("Smok Asset Mesh Warning: Serilize || LoadStaticMeshDataFromFile || \"{}\" is not the same version as the version of Smok you are using. The file's version is \"{}\", while the version you are using to load the file is \"{}\". We can not say there won't be issues loading this data. The function \"WriteStaticMeshDataToFile\" can be used to generate valid Smok Mesh files, matching this version of Smok.\n",
+				binaryFile.GetPathStr(), ver, GetAPIVersionStr());
+		}
+
+		//gets the mesh data
+		const size_t vertexCount = decl["vertexCount"];
+		data.vertices.resize(vertexCount);
+		BTD::IO::File::ReadWholeBinaryFile(binaryFile, data.vertices.data(), sizeof(Smok::Asset::Mesh::Vertex), vertexCount);
+
+		//generates the sub-meshes
+		const size_t subMeshCount = decl["meshCount"];
+		std::vector<std::vector<uint32_t>> submeshes = decl["meshes"].get<std::vector<std::vector<uint32_t>>>();
+		data.meshes.resize(subMeshCount);
+		for (size_t m = 0; m < subMeshCount; ++m)
+			data.meshes[m].indices = submeshes[m];
+
+		return true;
+	}
 }

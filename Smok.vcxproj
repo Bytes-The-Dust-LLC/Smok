@@ -142,8 +142,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="includes\Smok\Assets\AssetManager.hpp" />
+    <ClInclude Include="includes\Smok\Assets\AssetManagerAssets.hpp" />
     <ClInclude Include="includes\Smok\Assets\Mesh.hpp" />
-    <ClInclude Include="includes\Smok\Assets\Serilize\SerilizeMesh.hpp" />
     <ClInclude Include="includes\Smok\Components\Camera.hpp" />
     <ClInclude Include="includes\Smok\Components\IComponent.hpp" />
     <ClInclude Include="includes\Smok\Components\MeshComponent.hpp" />
