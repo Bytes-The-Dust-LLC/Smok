@@ -146,7 +146,6 @@
     <ClInclude Include="includes\Smok\Assets\AssetManagerAssets.hpp" />
     <ClInclude Include="includes\Smok\Assets\Mesh.hpp" />
     <ClInclude Include="includes\Smok\Components\Camera.hpp" />
-    <ClInclude Include="includes\Smok\Components\IComponent.hpp" />
     <ClInclude Include="includes\Smok\Components\MeshComponent.hpp" />
     <ClInclude Include="includes\Smok\Components\Transform.hpp" />
     <ClInclude Include="includes\Smok\Memory\LifetimeDeleteQueue.hpp" />

@@ -146,15 +146,32 @@ namespace Smok::Asset::AssetManager
 
 		Smok::Asset::Mesh::StaticMesh asset; //the asset
 
-		//loads the settings
+		//loads the mesh
+		inline bool LoadMesh()
+		{
+			if (assetIsCreated)
+				return true;
+
+			if (!Smok::Asset::Mesh::Serilize::LoadStaticMeshDataFromFile(declFile, binaryFile, asset))
+			{
+				return false;
+			}
+
+			return true;
+		}
 
 		//initalizes the mesh
 		inline bool InitalizeMesh(VmaAllocator& allocator)
 		{
+			//if (!assetIsCreated)
+			//	return;
+
 			//generate vertex and index buffers
 			asset.CreateVertexBuffers(allocator);
 			for (size_t i = 0; i < asset.meshes.size(); ++i)
 				asset.meshes[i].CreateIndexBuffers(allocator);
+
+			assetIsCreated = true;
 
 			return true;
 		}

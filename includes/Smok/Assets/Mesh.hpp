@@ -67,9 +67,17 @@ namespace Smok::Asset::Mesh
 			colorAttribute.format = VK_FORMAT_R32G32B32_SFLOAT;
 			colorAttribute.offset = offsetof(Vertex, color);
 
+			//Position will be stored at Location 3
+			VkVertexInputAttributeDescription texCordsAttribute = {};
+			texCordsAttribute.binding = 0;
+			texCordsAttribute.location = 3;
+			texCordsAttribute.format = VK_FORMAT_R32G32_SFLOAT;
+			texCordsAttribute.offset = offsetof(Vertex, textureCoords);
+
 			description.attributes.push_back(positionAttribute);
 			description.attributes.push_back(normalAttribute);
 			description.attributes.push_back(colorAttribute);
+			description.attributes.push_back(texCordsAttribute);
 			return description;
 		}
 	};

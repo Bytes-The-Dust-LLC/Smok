@@ -2,7 +2,7 @@
 
 //defines mesh renderer components
 
-#include <Smok/Components/IComponent.hpp>
+#include <BTDSTD/ECS/IComponent.hpp>
 
 #include <Smok/Assets/Mesh.hpp>
 
@@ -11,7 +11,7 @@
 namespace Smok::ECS::Comp
 {
 	//defines a static mesh renderer component
-	struct MeshRender : public IComponent
+	struct MeshRender : public BTD::ECS::Comp::IComponent
 	{
 		//pipeline
 		uint64_t pipelineLayoutID = 0, pipelineID = 0, staticMeshID;

@@ -2,7 +2,7 @@
 
 //defines a transform component
 
-#include <Smok/Components/IComponent.hpp>
+#include <BTDSTD/ECS/IComponent.hpp>
 
 #include <glm/vec3.hpp>
 #include <glm/gtx/transform.hpp>
@@ -13,7 +13,7 @@
 namespace Smok::ECS::Comp
 {
 	//defines a transform
-	struct Transform : public IComponent
+	struct Transform : public BTD::ECS::Comp::IComponent
 	{
 		bool rotationDataIsInRadians = false; //is internal data in radians
 

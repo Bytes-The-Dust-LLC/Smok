@@ -2,14 +2,14 @@
 
 //defines a camera
 
-#include <Smok/Components/IComponent.hpp>
+#include <BTDSTD/ECS/IComponent.hpp>
 
 #include <glm/gtx/transform.hpp>
 
 namespace Smok::ECS::Comp
 {
 	//defines a camera
-	struct Camera : public IComponent
+	struct Camera : public BTD::ECS::Comp::IComponent
 	{
 		glm::mat4 projection = glm::mat4(1.0f), view = glm::mat4(1.0f),
 			PV = glm::mat4(1.0f);
